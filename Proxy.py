@@ -141,9 +141,6 @@ while True:
     
     # Updata print
     print ('> ' + cache_str)
-    
-    #for line in cacheData:
-    #  print ('> ' + cacheData)
   
   except:
     # cache miss.  Get resource from origin server
@@ -206,11 +203,11 @@ while True:
       response_string = originServerResponse.decode('ISO-8859-1')
       
       # Cannot cache
-      no_store = re.search(r'Cache-Control:\s*no-store', response_string, re.IGNORECASE)
+      cache_blocked = re.search(r'Cache-Control:\s*no-store', response_string, re.IGNORECASE)
       
       # Should it be cached?
       Find_cache = True
-      if no_store:
+      if cache_blocked:
         Find_cache = False
         print("If it is no_store, then it cannot be cached.")
       
