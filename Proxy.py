@@ -118,7 +118,8 @@ while True:
     # ProxyServer finds a cache hit
     # Send back response to client 
     # ~~~~ INSERT CODE ~~~~
-    
+    for line in cacheData:#cycle
+      clientSocket.sendall(line.encode()) #Convert the string to bytes and send it
     # ~~~~ END CODE INSERT ~~~~
     cacheFile.close()
     print ('Sent to the client:')
@@ -129,8 +130,7 @@ while True:
     # Create a socket to connect to origin server
     # and store in originServerSocket
     # ~~~~ INSERT CODE ~~~~
-    for line in cacheData: #cycle
-      clientSocket.sendall((line.encode)) #Convert the string to bytes and send it
+    originServerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #Create a new socket and connect to the specified website
     # ~~~~ END CODE INSERT ~~~~
 
     print ('Connecting to:\t\t' + hostname + '\n')
@@ -139,6 +139,7 @@ while True:
       address = socket.gethostbyname(hostname)
       # Connect to the origin server
       # ~~~~ INSERT CODE ~~~~
+      originServerSocket.connect((address,80)) #Origin socket server is connected to the web IP, 80 is the default value for http
       # ~~~~ END CODE INSERT ~~~~
       print ('Connected to origin Server')
 
@@ -149,6 +150,8 @@ while True:
       # originServerRequest is the first line in the request and
       # originServerRequestHeader is the second line in the request
       # ~~~~ INSERT CODE ~~~~
+      originServerRequest = f"GET {resource} HTTP/1.1" #Request, sent to the origin server
+      originServerRequestHeader = f"Host: {hostname}\r\n"
       # ~~~~ END CODE INSERT ~~~~
 
       # Construct the request to send to the origin server
@@ -169,10 +172,12 @@ while True:
 
       # Get the response from the origin server
       # ~~~~ INSERT CODE ~~~~
+      originServerRespone = originServerSocket.recv(BUFFER_SIZE)
       # ~~~~ END CODE INSERT ~~~~
 
       # Send the response to the client
       # ~~~~ INSERT CODE ~~~~
+      clientSocket.sendall(originServerRespone)
       # ~~~~ END CODE INSERT ~~~~
 
       # Create a new file in the cache for the requested file.
@@ -184,6 +189,7 @@ while True:
 
       # Save origin server response in the cache file
       # ~~~~ INSERT CODE ~~~~
+      cacheFile.write(originServerRespone)
       # ~~~~ END CODE INSERT ~~~~
       cacheFile.close()
       print ('cache file closed')
